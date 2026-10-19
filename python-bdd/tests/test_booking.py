@@ -17,19 +17,6 @@ def test_create_booking(payload):
     assert data["booking"]["firstname"] == payload["firstname"]
     assert data["booking"]["totalprice"] == payload["totalprice"]
 
-
-def test_get_booking_by_id(payload):
-    create_response = create_booking(payload)
-    create_data = create_response.json()
-    booking_id = create_data["bookingid"]
-
-    response = get_booking_by_id(booking_id)
-
-    assert response.status_code == 200
-    assert isinstance(booking_id, int)
-    assert booking_id > 0
-
-
 def test_get_booking_data_by_id(booking, payload):
     response = get_booking_by_id(booking)
 
