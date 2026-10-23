@@ -6,6 +6,7 @@ from utils.api_client import (
     delete_booking_by_id
 )
 
+
 def test_create_booking(payload, booking_ids_to_delete):
     response = create_booking(payload)
 
@@ -26,6 +27,7 @@ def test_get_booking_data_by_id(booking, payload):
 
     assert response.status_code == 200
     assert response.json() == payload
+
 
 def test_update_booking_by_id(booking, payload, new_payload, token):
     response = get_booking_by_id(booking)
@@ -80,7 +82,7 @@ def test_update_booking_without_token(booking, payload, new_payload):
     assert response.status_code == 200
     assert response.json() == payload
 
-    updated_response = update_booking_by_id(booking, new_payload, None)
+    updated_response = update_booking_by_id(booking, new_payload, token=None)
 
     assert updated_response.status_code == 403
     assert updated_response.text == "Forbidden"
