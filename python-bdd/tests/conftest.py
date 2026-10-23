@@ -1,9 +1,12 @@
 import pytest
-
 from utils.api_client import (
-    create_booking, 
-    create_token, 
+    create_booking,
+    create_token,
     delete_booking_by_id
+)
+from utils.booking_data import (
+    build_booking_payload,
+    build_new_booking_payload
 )
 
 @pytest.fixture(scope="session")
@@ -15,35 +18,11 @@ def token():
 
 @pytest.fixture
 def payload():
-    payload = {
-        "firstname": "Azmi",
-        "lastname": "Lupinsky",
-        "totalprice": 72,
-        "depositpaid": True,
-        "bookingdates": {
-            "checkin": "2026-10-02",
-            "checkout": "2026-10-07"
-        },
-        "additionalneeds": "Breakfast"
-    }
-
-    return payload
+    return build_booking_payload()
 
 @pytest.fixture
 def new_payload():
-    new_payload = {
-        "firstname": "Sasuke",
-        "lastname": "Uchiha",
-        "totalprice": 1,
-        "depositpaid": True,
-        "bookingdates": {
-            "checkin": "2026-11-02",
-            "checkout": "2026-11-07"
-        },
-        "additionalneeds": "Pool"
-    }
-
-    return new_payload
+    return build_new_booking_payload()
 
 @pytest.fixture
 def booking(token, payload):
