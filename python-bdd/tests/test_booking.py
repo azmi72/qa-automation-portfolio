@@ -6,16 +6,20 @@ from utils.api_client import (
     delete_booking_by_id
 )
 
-def test_create_booking(payload):
+def test_create_booking(payload, booking_ids_to_delete):
     response = create_booking(payload)
-    data = response.json()
-    booking_id = data["bookingid"]
 
     assert response.status_code == 200
+
+    data = response.json()
+    booking_id = data["bookingid"]
+    booking_ids_to_delete.append(booking_id)
+
     assert isinstance(booking_id, int)
     assert booking_id > 0
     assert data["booking"]["firstname"] == payload["firstname"]
     assert data["booking"]["totalprice"] == payload["totalprice"]
+
 
 def test_get_booking_data_by_id(booking, payload):
     response = get_booking_by_id(booking)
@@ -42,7 +46,7 @@ def test_update_booking_by_id(booking, payload, new_payload, token):
 
 def test_partially_update_booking_by_id(booking, payload, token):
     partial_payload = {"firstname": "Itachi"}
-    
+
     response = get_booking_by_id(booking)
 
     assert response.status_code == 200

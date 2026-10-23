@@ -52,3 +52,12 @@ def booking(token, payload):
     yield booking_id
 
     delete_booking_by_id(booking_id, token)
+
+@pytest.fixture
+def booking_ids_to_delete(token):
+    booking_ids = []
+
+    yield booking_ids
+
+    for booking_id in booking_ids:
+        delete_booking_by_id(booking_id, token)
