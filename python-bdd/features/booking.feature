@@ -5,6 +5,8 @@ Feature: Booking management
         Given I have a valid booking payload
         When I send a request to create the booking
         Then the response status should be 200
+        And the booking id should exist
+        And the response body should be the same as the payload
 
     Scenario: Get a booking details with a valid id
         Given I have a booking with a valid payload
