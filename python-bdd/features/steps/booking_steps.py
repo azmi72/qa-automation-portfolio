@@ -31,6 +31,17 @@ def step_use_valid_token(context):
     context.request_token = context.token
 
 
+@given("I have an empty booking payload")
+def step_prepare_empty_booking_payload(context):
+    context.payload = {}
+
+
+@given("I have a booking payload without firstname")
+def step_prepare_booking_payload_without_firstname(context):
+    context.payload = build_booking_payload()
+    del context.payload["firstname"]
+
+
 ### WHEN ###
 
 @when("I send a request to create the booking")
@@ -56,6 +67,11 @@ def step_delete_booking(context):
 @then("the response status should be {status:d}")
 def step_check_status_code(context, status):
     assert context.response.status_code == status, f"Expected status {status}, but got {context.response.status_code}"
+
+
+@then("the response message should be {message}")
+def step_check_message(context, message):
+    assert context.response.text == message, f"Expected message '{message}', but got '{context.response.text}'"
 
 
 @then("the booking id should exist")

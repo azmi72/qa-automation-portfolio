@@ -19,3 +19,14 @@ Feature: Booking management
         When I send a request to delete the booking
         Then the response status should be 201
         And the booking should no longer exist
+
+    Scenario Outline: Create a new booking with <condition>
+        Given I have <condition>
+        When I send a request to create the booking
+        Then the response status should be <status_code>
+        And the response message should be <message>
+
+        Examples: Invalid payload
+            | condition                             | status_code | message                  |
+            | an empty booking payload              | 500         | Internal Server Error    |
+            | a booking payload without firstname   | 500         | Internal Server Error    |
