@@ -2,8 +2,7 @@ from behave import given, when, then
 from utils.api_client import (
     create_booking,
     get_booking_by_id,
-    delete_booking_by_id,
-    create_token
+    delete_booking_by_id
 )
 from utils.booking_data import (
     build_booking_payload
@@ -21,19 +20,15 @@ def step_booking_exists(context):
     context.payload = build_booking_payload()
     response = create_booking(context.payload)
 
-    assert response.status_code == 200, f"Precondition failed: create booking returned status code: {response.status_code}"
+    assert response.status_code == 200, f"Precondition failed: creating a booking returned status code: {response.status_code}"
 
     context.booking_id = response.json()["bookingid"]
+    context.booking_ids.append(context.booking_id)
 
 
 @given("I have a valid token")
-def step_get_valid_token(context):
-    response = create_token()
-
-    assert response.status_code == 200, f"Precondition failed: create token returned status code: {response.status_code}"
-    assert response.json().get("token"), "Precondition failed: response has no token"
-
-    context.token = response.json()["token"]
+def step_use_valid_token(context):
+    context.request_token = context.token
 
 
 ### WHEN ###
@@ -41,6 +36,9 @@ def step_get_valid_token(context):
 @when("I send a request to create the booking")
 def step_create_booking(context):
     context.response = create_booking(context.payload)
+    if context.response.status_code == 200:
+        booking_id = context.response.json()["bookingid"]
+        context.booking_ids.append(booking_id)
 
 
 @when("I send a request to get the booking")
@@ -50,14 +48,14 @@ def step_get_booking(context):
 
 @when("I send a request to delete the booking")
 def step_delete_booking(context):
-    context.response = delete_booking_by_id(context.booking_id, context.token)
+    context.response = delete_booking_by_id(context.booking_id, context.request_token)
 
 
 ### THEN ###
 
 @then("the response status should be {status:d}")
 def step_check_status_code(context, status):
-    assert context.response.status_code == status, f"Postcondition failed: status code {context.response.status_code}"
+    assert context.response.status_code == status, f"Expected status {status}, but got {context.response.status_code}"
 
 
 @then("the booking id should exist")
