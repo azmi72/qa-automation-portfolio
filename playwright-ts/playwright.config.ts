@@ -1,9 +1,10 @@
 import { defineConfig } from '@playwright/test';
+import { BASE_URL } from './src/config.ts';
 
 export default defineConfig({
     testDir: './tests',
     reporter: 'list',
     use: {
-        baseURL: 'https://restful-booker.herokuapp.com',
+        baseURL: BASE_URL,
     },
 });
