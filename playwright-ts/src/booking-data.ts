@@ -13,3 +13,19 @@ export function buildBookingPayload(): Booking {
         additionalneeds: 'Breakfast'
     };
 }
+
+export function buildNewBookingPayload(): Booking {
+    return {
+        firstname: 'Uchiha',
+        lastname: 'Sasuke',
+        totalprice: 1,
+        depositpaid: false,
+        bookingdates: {
+            checkin: '2026-11-01',
+            checkout: '2026-11-02'
+        },
+        additionalneeds: 'None'
+    };
+}
+
+export const OUT_OF_RANGE_BOOKING_ID = 0;
