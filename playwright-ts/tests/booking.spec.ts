@@ -1,10 +1,9 @@
 import { test, expect } from '../src/fixtures.ts';
 import type { CreateBookingResponse, Booking } from '../src/booking.types.ts';
-import { buildAuthHeaders } from '../src/auth.ts';
 import { OUT_OF_RANGE_BOOKING_ID } from '../src/booking-data.ts';
 
-test('create booking returns the created booking', async ({ request, payload, token }) => {
-    const response = await request.post('/booking', { data: payload });
+test('create booking returns the created booking', async ({ bookingClient, payload, token }) => {
+    const response = await bookingClient.createBooking(payload);
     let bookingId: number | undefined;
 
     try {
@@ -17,14 +16,14 @@ test('create booking returns the created booking', async ({ request, payload, to
         expect(body.bookingid).toBeGreaterThan(0);
     } finally {
         if (bookingId !== undefined) {
-            await request.delete(`/booking/${bookingId}`, { headers: buildAuthHeaders(token) });
+            await bookingClient.deleteBooking(bookingId, token);
         }
     }
 });
 
 
-test('get booking by id returns the booking', async ({ request, bookingId, payload }) => {
-    const response = await request.get(`/booking/${bookingId}`);
+test('get booking by id returns the booking', async ({ bookingClient, bookingId, payload }) => {
+    const response = await bookingClient.getBooking(bookingId);
 
     expect(response.status()).toBe(200);
 
@@ -34,8 +33,8 @@ test('get booking by id returns the booking', async ({ request, bookingId, paylo
 });
 
 
-test('get booking returns the same data as the payload', async ({ request, bookingId, payload }) => {
-    const response = await request.get(`/booking/${bookingId}`);
+test('get booking returns the same data as the payload', async ({ bookingClient, bookingId, payload }) => {
+    const response = await bookingClient.getBooking(bookingId);
 
     expect(response.status()).toBe(200);
 
@@ -45,8 +44,8 @@ test('get booking returns the same data as the payload', async ({ request, booki
 });
 
 
-test('update booking with PUT returns the updated booking', async ({ request, bookingId, newPayload, token }) => {
-    const response = await request.put(`/booking/${bookingId}`, { headers: buildAuthHeaders(token), data: newPayload });
+test('update booking with PUT returns the updated booking', async ({ bookingClient, bookingId, newPayload, token }) => {
+    const response = await bookingClient.updateBooking(bookingId, newPayload, token);
 
     expect(response.status()).toBe(200);
 
@@ -56,10 +55,10 @@ test('update booking with PUT returns the updated booking', async ({ request, bo
 });
 
 
-test('partial update with PATCH changes only the firstname', async ({ request, bookingId, payload, token }) => {
+test('partial update with PATCH changes only the firstname', async ({ bookingClient, bookingId, payload, token }) => {
     const patchPayload = { firstname: 'Uchiha' };
     const expectedBooking = { ...payload, ...patchPayload };
-    const response = await request.patch(`/booking/${bookingId}`, { headers: buildAuthHeaders(token), data: patchPayload });
+    const response = await bookingClient.partiallyUpdateBooking(bookingId, patchPayload, token);
 
     expect(response.status()).toBe(200);
 
@@ -69,25 +68,25 @@ test('partial update with PATCH changes only the firstname', async ({ request, b
 });
 
 
-test('delete booking removes the booking', async ({ request, bookingId, token }) => {
-    const response = await request.delete(`/booking/${bookingId}`, { headers: buildAuthHeaders(token) });
+test('delete booking removes the booking', async ({ bookingClient, bookingId, token }) => {
+    const response = await bookingClient.deleteBooking(bookingId, token);
 
     expect(response.status()).toBe(201);
 
-    const responseAfterDelete = await request.get(`/booking/${bookingId}`);
+    const responseAfterDelete = await bookingClient.getBooking(bookingId);
 
     expect(responseAfterDelete.status()).toBe(404);
     expect(await responseAfterDelete.text()).toBe('Not Found');
 });
 
 
-test('update booking without token returns forbidden', async ({ request, bookingId, payload, newPayload }) => {
-    const response = await request.put(`/booking/${bookingId}`, { data: newPayload });
+test('update booking without token returns forbidden', async ({ bookingClient, bookingId, payload, newPayload }) => {
+    const response = await bookingClient.updateBooking(bookingId, newPayload);
 
     expect(response.status()).toBe(403);
     expect(await response.text()).toBe('Forbidden');
 
-    const fetchedResponse = await request.get(`/booking/${bookingId}`);
+    const fetchedResponse = await bookingClient.getBooking(bookingId);
 
     expect(fetchedResponse.status()).toBe(200);
 
@@ -97,8 +96,8 @@ test('update booking without token returns forbidden', async ({ request, booking
 });
 
 
-test('get booking with an out-of-range id returns not found', async ({ request }) => {
-    const response = await request.get(`/booking/${OUT_OF_RANGE_BOOKING_ID}`);
+test('get booking with an out-of-range id returns not found', async ({ bookingClient }) => {
+    const response = await bookingClient.getBooking(OUT_OF_RANGE_BOOKING_ID);
 
     expect(response.status()).toBe(404);
     expect(await response.text()).toBe('Not Found');
