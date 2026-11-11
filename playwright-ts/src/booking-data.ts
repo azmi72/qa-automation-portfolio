@@ -1,6 +1,6 @@
 import type { Booking } from './booking.types.ts';
 
-export function buildBookingPayload(): Booking {
+export function buildBookingPayload(overrides: Partial<Booking> = {}): Booking {
     return {
         firstname: 'Azmi',
         lastname: 'Lupinsky',
@@ -8,23 +8,10 @@ export function buildBookingPayload(): Booking {
         depositpaid: true,
         bookingdates: {
             checkin: '2026-10-02',
-            checkout: '2026-10-07'
+            checkout: '2026-10-07',
         },
-        additionalneeds: 'Breakfast'
-    };
-}
-
-export function buildNewBookingPayload(): Booking {
-    return {
-        firstname: 'Uchiha',
-        lastname: 'Sasuke',
-        totalprice: 1,
-        depositpaid: false,
-        bookingdates: {
-            checkin: '2026-11-01',
-            checkout: '2026-11-02'
-        },
-        additionalneeds: 'None'
+        additionalneeds: 'Breakfast',
+        ...overrides,
     };
 }
 

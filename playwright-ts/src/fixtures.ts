@@ -1,6 +1,6 @@
 import { test as base, expect } from '@playwright/test';
 import type { Booking, CreateBookingResponse } from './booking.types.ts';
-import { buildBookingPayload, buildNewBookingPayload } from './booking-data.ts';
+import { buildBookingPayload } from './booking-data.ts';
 import { BASE_URL, CREDENTIALS } from './config.ts';
 import { BookingClient } from './booking-client.ts';
 
@@ -14,7 +14,17 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
     },
 
     newPayload: async ({}, use) => {
-        const newPayload: Booking = buildNewBookingPayload();
+        const newPayload: Booking = buildBookingPayload({
+            firstname: 'Uchiha',
+            lastname: 'Sasuke',
+            totalprice: 1,
+            depositpaid: false,
+            bookingdates: {
+                checkin: '2026-11-01',
+                checkout: '2026-11-02',
+            },
+            additionalneeds: 'None',
+        });
         await use(newPayload);
     },
 
