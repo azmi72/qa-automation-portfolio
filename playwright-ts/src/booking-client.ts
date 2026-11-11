@@ -36,4 +36,8 @@ export class BookingClient {
     async deleteBooking(id: number, token?: string): Promise<APIResponse> {
         return this.request.delete(`/booking/${id}`, { headers: buildAuthHeaders(token) });
     }
+
+    async createBookingWithPartialPayload(payload: Partial<Booking>): Promise<APIResponse> {
+        return this.request.post('/booking', { data: payload });
+    }
 }
