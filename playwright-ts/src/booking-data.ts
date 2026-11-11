@@ -15,4 +15,4 @@ export function buildBookingPayload(overrides: Partial<Booking> = {}): Booking {
     };
 }
 
-export const OUT_OF_RANGE_BOOKING_ID = 0;
+export const OUT_OF_RANGE_BOOKING_IDS = [0, -1];

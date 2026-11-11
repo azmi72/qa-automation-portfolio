@@ -1,6 +1,6 @@
 import { test, expect } from '../src/fixtures.ts';
 import type { CreateBookingResponse, Booking } from '../src/booking.types.ts';
-import { OUT_OF_RANGE_BOOKING_ID } from '../src/booking-data.ts';
+import { buildBookingPayload, OUT_OF_RANGE_BOOKING_IDS } from '../src/booking-data.ts';
 
 test('create booking returns the created booking', async ({ bookingClient, payload, token }) => {
     const response = await bookingClient.createBooking(payload);
@@ -95,10 +95,27 @@ test('update booking without token returns forbidden', async ({ bookingClient, b
     expect(fetchedBooking).toEqual(payload);
 });
 
+const { firstname, ...withoutFirstname } = buildBookingPayload();
 
-test('get booking with an out-of-range id returns not found', async ({ bookingClient }) => {
-    const response = await bookingClient.getBooking(OUT_OF_RANGE_BOOKING_ID);
+const createBookingWithInvalidBodyCases = [
+    { title: 'without firstname', payload: withoutFirstname },
+    { title: 'with an empty body', payload: {} },
+];
 
-    expect(response.status()).toBe(404);
-    expect(await response.text()).toBe('Not Found');
-});
+for (const testCase of createBookingWithInvalidBodyCases) {
+    test(`create booking ${testCase.title} returns internal server error`, async ({ bookingClient }) => {
+        const response = await bookingClient.createBookingWithPartialPayload(testCase.payload);
+
+        expect(response.status()).toBe(500);
+        expect(await response.text()).toBe('Internal Server Error');
+    });
+}
+
+for (const outOfRangeId of OUT_OF_RANGE_BOOKING_IDS) {
+    test(`get booking with out-of-range id ${outOfRangeId} returns not found`, async ({ bookingClient }) => {
+        const response = await bookingClient.getBooking(outOfRangeId);
+
+        expect(response.status()).toBe(404);
+        expect(await response.text()).toBe('Not Found');
+    });
+}
