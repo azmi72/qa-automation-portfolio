@@ -7,4 +7,6 @@ export default defineConfig({
     use: {
         baseURL: BASE_URL,
     },
+    forbidOnly: !!process.env.CI,
+    retries: process.env.CI ? 1 : 0,
 });
