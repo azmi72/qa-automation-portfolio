@@ -1,0 +1,39 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python-bdd:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python-bdd
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.14'
+      - run: pip install -r requirements.txt
+      - run: pytest -v
+      - run: behave
+
+  playwright-ts:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: playwright-ts
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 'lts/*'
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-ts/playwright-report/
