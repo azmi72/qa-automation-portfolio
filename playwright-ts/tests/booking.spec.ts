@@ -2,7 +2,7 @@ import { test, expect } from '../src/fixtures.ts';
 import type { CreateBookingResponse, Booking } from '../src/booking.types.ts';
 import { buildBookingPayload, OUT_OF_RANGE_BOOKING_IDS } from '../src/booking-data.ts';
 
-test('create booking returns the created booking', async ({ bookingClient, payload, token }) => {
+test('create booking returns the created booking', { tag: ['@smoke', '@positive'] }, async ({ bookingClient, payload, token }) => {
     const response = await bookingClient.createBooking(payload);
     let bookingId: number | undefined;
 
@@ -22,7 +22,7 @@ test('create booking returns the created booking', async ({ bookingClient, paylo
 });
 
 
-test('get booking by id returns the booking', async ({ bookingClient, bookingId, payload }) => {
+test('get booking by id returns the booking', { tag: '@positive' }, async ({ bookingClient, bookingId, payload }) => {
     const response = await bookingClient.getBooking(bookingId);
 
     expect(response.status()).toBe(200);
@@ -33,7 +33,7 @@ test('get booking by id returns the booking', async ({ bookingClient, bookingId,
 });
 
 
-test('get booking returns the same data as the payload', async ({ bookingClient, bookingId, payload }) => {
+test('get booking returns the same data as the payload', { tag: '@positive' }, async ({ bookingClient, bookingId, payload }) => {
     const response = await bookingClient.getBooking(bookingId);
 
     expect(response.status()).toBe(200);
@@ -44,7 +44,7 @@ test('get booking returns the same data as the payload', async ({ bookingClient,
 });
 
 
-test('update booking with PUT returns the updated booking', async ({ bookingClient, bookingId, newPayload, token }) => {
+test('update booking with PUT returns the updated booking', { tag: '@positive' }, async ({ bookingClient, bookingId, newPayload, token }) => {
     const response = await bookingClient.updateBooking(bookingId, newPayload, token);
 
     expect(response.status()).toBe(200);
@@ -55,7 +55,7 @@ test('update booking with PUT returns the updated booking', async ({ bookingClie
 });
 
 
-test('partial update with PATCH changes only the firstname', async ({ bookingClient, bookingId, payload, token }) => {
+test('partial update with PATCH changes only the firstname', { tag: '@positive' }, async ({ bookingClient, bookingId, payload, token }) => {
     const patchPayload = { firstname: 'Uchiha' };
     const expectedBooking = { ...payload, ...patchPayload };
     const response = await bookingClient.partiallyUpdateBooking(bookingId, patchPayload, token);
@@ -68,7 +68,7 @@ test('partial update with PATCH changes only the firstname', async ({ bookingCli
 });
 
 
-test('delete booking removes the booking', async ({ bookingClient, bookingId, token }) => {
+test('delete booking removes the booking', { tag: '@positive' }, async ({ bookingClient, bookingId, token }) => {
     const response = await bookingClient.deleteBooking(bookingId, token);
 
     expect(response.status()).toBe(201);
@@ -80,7 +80,7 @@ test('delete booking removes the booking', async ({ bookingClient, bookingId, to
 });
 
 
-test('update booking without token returns forbidden', async ({ bookingClient, bookingId, payload, newPayload }) => {
+test('update booking without token returns forbidden', { tag: '@negative' }, async ({ bookingClient, bookingId, payload, newPayload }) => {
     const response = await bookingClient.updateBooking(bookingId, newPayload);
 
     expect(response.status()).toBe(403);
@@ -103,7 +103,7 @@ const createBookingWithInvalidBodyCases = [
 ];
 
 for (const testCase of createBookingWithInvalidBodyCases) {
-    test(`create booking ${testCase.title} returns internal server error`, async ({ bookingClient }) => {
+    test(`create booking ${testCase.title} returns internal server error`, { tag: '@negative' }, async ({ bookingClient }) => {
         const response = await bookingClient.createBookingWithPartialPayload(testCase.payload);
 
         expect(response.status()).toBe(500);
@@ -112,7 +112,7 @@ for (const testCase of createBookingWithInvalidBodyCases) {
 }
 
 for (const outOfRangeId of OUT_OF_RANGE_BOOKING_IDS) {
-    test(`get booking with out-of-range id ${outOfRangeId} returns not found`, async ({ bookingClient }) => {
+    test(`get booking with out-of-range id ${outOfRangeId} returns not found`, { tag: '@negative' }, async ({ bookingClient }) => {
         const response = await bookingClient.getBooking(outOfRangeId);
 
         expect(response.status()).toBe(404);
