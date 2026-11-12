@@ -3,7 +3,7 @@ import { BASE_URL } from './src/config.ts';
 
 export default defineConfig({
     testDir: './tests',
-    reporter: 'list',
+    reporter: [['list'], ['html', { open: 'never' }]],
     use: {
         baseURL: BASE_URL,
     },
