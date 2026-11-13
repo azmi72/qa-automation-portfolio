@@ -9,8 +9,8 @@ export class BookingClient {
         return this.request.get('/ping');
     }
 
-    async getBookingIds(): Promise<APIResponse> {
-        return this.request.get('/booking');
+    async getBookingIds(filters?: { firstname: string; lastname: string }): Promise<APIResponse> {
+        return this.request.get('/booking', { params: filters });
     }
 
     async getBooking(id: number): Promise<APIResponse> {

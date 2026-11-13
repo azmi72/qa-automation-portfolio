@@ -80,6 +80,41 @@ test('delete booking removes the booking', { tag: '@positive' }, async ({ bookin
 });
 
 
+test('search bookings by firstname and lastname returns the created booking id', { tag: '@positive' }, async ({ bookingClient, payload, token }) => {
+    const newPayload = { firstname: `Aleesha_${Date.now()}` };
+    const expectedBooking = { ...payload, ...newPayload };
+
+    const response = await bookingClient.createBooking(expectedBooking);
+
+    let bookingId: number | undefined;
+
+    try {
+        expect(response.status()).toBe(200);
+
+        const fetchedResponse: CreateBookingResponse = await response.json();
+
+        expect(fetchedResponse.booking.firstname).toBe(newPayload.firstname);
+
+        bookingId = fetchedResponse.bookingid;
+
+        const searchResponse = await bookingClient.getBookingIds({
+            firstname: expectedBooking.firstname,
+            lastname: expectedBooking.lastname,
+        });
+
+        expect(searchResponse.status()).toBe(200);
+
+        const searchResults = await searchResponse.json();
+
+        expect(searchResults).toContainEqual({ bookingid: bookingId });
+    } finally {
+        if (bookingId !== undefined) {
+            await bookingClient.deleteBooking(bookingId, token);
+        }
+    }
+});
+
+
 test('update booking without token returns forbidden', { tag: '@negative' }, async ({ bookingClient, bookingId, payload, newPayload }) => {
     const response = await bookingClient.updateBooking(bookingId, newPayload);
 
@@ -95,12 +130,14 @@ test('update booking without token returns forbidden', { tag: '@negative' }, asy
     expect(fetchedBooking).toEqual(payload);
 });
 
+
 const { firstname, ...withoutFirstname } = buildBookingPayload();
 
 const createBookingWithInvalidBodyCases = [
     { title: 'without firstname', payload: withoutFirstname },
     { title: 'with an empty body', payload: {} },
 ];
+
 
 for (const testCase of createBookingWithInvalidBodyCases) {
     test(`create booking ${testCase.title} returns internal server error`, { tag: '@negative' }, async ({ bookingClient }) => {
@@ -110,6 +147,7 @@ for (const testCase of createBookingWithInvalidBodyCases) {
         expect(await response.text()).toBe('Internal Server Error');
     });
 }
+
 
 for (const outOfRangeId of OUT_OF_RANGE_BOOKING_IDS) {
     test(`get booking with out-of-range id ${outOfRangeId} returns not found`, { tag: '@negative' }, async ({ bookingClient }) => {
