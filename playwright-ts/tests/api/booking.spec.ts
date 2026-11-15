@@ -1,6 +1,6 @@
-import { test, expect } from '../src/fixtures.ts';
-import type { CreateBookingResponse, Booking } from '../src/booking.types.ts';
-import { buildBookingPayload, OUT_OF_RANGE_BOOKING_IDS } from '../src/booking-data.ts';
+import { test, expect } from '../../src/fixtures.ts';
+import type { CreateBookingResponse, Booking } from '../../src/booking.types.ts';
+import { buildBookingPayload, OUT_OF_RANGE_BOOKING_IDS } from '../../src/booking-data.ts';
 
 test('create booking returns the created booking', { tag: ['@smoke', '@positive'] }, async ({ bookingClient, payload, token }) => {
     const response = await bookingClient.createBooking(payload);
