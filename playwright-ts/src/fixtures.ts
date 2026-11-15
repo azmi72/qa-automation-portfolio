@@ -7,6 +7,7 @@ import { BookingClient } from './booking-client.ts';
 type TestFixtures = { payload: Booking; newPayload: Booking; bookingId: number; bookingClient: BookingClient };
 type WorkerFixtures = { token: string };
 
+// API helper
 export const test = base.extend<TestFixtures, WorkerFixtures>({
     payload: async ({}, use) => {
         const payload: Booking = buildBookingPayload();
@@ -60,4 +61,5 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
     }, { scope: 'worker' }]
 });
 
+// API helper
 export { expect } from '@playwright/test';

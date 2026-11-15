@@ -2,6 +2,7 @@ import type { APIRequestContext, APIResponse } from '@playwright/test';
 import type { Booking, Credentials } from './booking.types.ts';
 import { buildAuthHeaders } from './auth.ts';
 
+// API helper
 export class BookingClient {
     constructor(private readonly request: APIRequestContext) {}
 

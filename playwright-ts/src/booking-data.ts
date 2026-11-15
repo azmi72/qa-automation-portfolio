@@ -1,5 +1,6 @@
 import type { Booking } from './booking.types.ts';
 
+// API helper
 export function buildBookingPayload(overrides: Partial<Booking> = {}): Booking {
     return {
         firstname: 'Azmi',
@@ -15,4 +16,5 @@ export function buildBookingPayload(overrides: Partial<Booking> = {}): Booking {
     };
 }
 
+// API helper
 export const OUT_OF_RANGE_BOOKING_IDS = [0, -1];
