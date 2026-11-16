@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/azmi72/qa-automation-portfolio/actions/workflows/tests.yml/badge.svg)](https://github.com/azmi72/qa-automation-portfolio/actions/workflows/tests.yml)
 
-This is my repository for creating a QA automation testing flow using **pytest**, **BDD with behave**, and **Playwright with TypeScript**. I use `restful-booker` from https://restful-booker.herokuapp.com/apidoc/index.html as the **system under test**.
+API test automation for the restful-booker demo API, built twice: in Python with **pytest** and **behave** (BDD), and in **Playwright with TypeScript**. Both suites run in GitHub Actions CI. I use `restful-booker` from https://restful-booker.herokuapp.com/apidoc/index.html as the **system under test**.
 
 **📑 Contents**
 
@@ -16,7 +16,7 @@ This is my repository for creating a QA automation testing flow using **pytest**
 
 ## 🐍 python-bdd
 
-I use **pytest** for running integration tests and BDD with **behave** for running smoke tests, positive and negative test cases.
+I use **pytest** for integration tests and **behave** (BDD) for smoke, positive and negative scenarios.
 
 ### 🧰 Tech Stack
 
@@ -97,8 +97,9 @@ I use **Playwright Test** with **TypeScript** for API tests, covering smoke, pos
 | `src/config.ts` | Base URL and credentials |
 | `src/fixtures.ts` | Custom fixtures for the client, token, payload, and booking setup and cleanup |
 | **`tests/`** | **Main folder for Playwright tests** |
-| `tests/booking.spec.ts` | Playwright test cases |
-| `playwright.config.ts` | Playwright configuration: testDir, reporters, baseURL, forbidOnly, retries |
+| `tests/api/booking.spec.ts` | Playwright API test cases |
+| `tests/ui/` | Playwright UI tests (work in progress) |
+| `playwright.config.ts` | Playwright configuration: projects (api, ui), reporters, forbidOnly, retries |
 | `package.json` | Dependencies and npm scripts |
 | `package-lock.json` | Locked dependency versions |
 | `tsconfig.json` | TypeScript compiler settings |
@@ -128,6 +129,7 @@ I use **Playwright Test** with **TypeScript** for API tests, covering smoke, pos
 | `npm run test:smoke` | Run only smoke tests |
 | `npm run test:positive` | Run only positive tests |
 | `npm run test:negative` | Run only negative tests |
+| `npm run test:api` | Run only API tests |
 | `BASE_URL=<url> npm test` | Run the tests against a different base URL |
 | `npm run report` | Open the latest HTML report in the browser |
 
@@ -160,7 +162,7 @@ Every push and pull request runs the `Tests` workflow on GitHub Actions ([`.gith
 | Job | Description |
 | --- | --- |
 | `python-bdd` | Installs the dependencies, then runs `pytest -v` and `behave` |
-| `playwright-ts` | Installs the dependencies with `npm ci`, then runs `npm run typecheck` and `npm test` |
+| `playwright-ts` | Installs the dependencies with `npm ci`, runs `npm run typecheck`, installs Chromium, then runs `npm test` |
 
 The Playwright HTML report is uploaded as the `playwright-report` artifact **on every run, including failed runs**. You can download it from the run summary page in the [Actions tab](https://github.com/azmi72/qa-automation-portfolio/actions). In CI, **`test.only` is not allowed** and **failed tests are retried once**.
 
