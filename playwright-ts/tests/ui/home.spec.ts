@@ -1,16 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../src/ui-fixtures.ts';
 
-test('home page shows the correct title and main heading', { tag: ['@smoke', '@positive'] }, async ({ page }) => {
-    await page.goto('/');
-    const heading = page.getByRole('heading', { name: 'Welcome to Shady Meadows B&B' });
+test('home page shows the correct title and main heading', { tag: ['@smoke', '@positive'] }, async ({ homePage, page }) => {
+    await homePage.goto();
 
     await expect(page).toHaveTitle('Restful-booker-platform demo');
-    await expect(heading).toBeVisible();
+    await expect(homePage.welcomeHeading).toBeVisible();
 });
 
-test('home page shows the Our Rooms section', { tag: '@positive' }, async ({ page }) => {
-    await page.goto('/');
-    const ourRooms = page.getByRole('heading', { name: 'Our Rooms' });
+test('home page shows the Our Rooms section', { tag: '@positive' }, async ({ homePage }) => {
+    await homePage.goto();
 
-    await expect(ourRooms).toBeVisible();
+    await expect(homePage.ourRoomsHeading).toBeVisible();
 });

@@ -1,19 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../src/ui-fixtures.ts';
 import { buildMessage } from '../../src/message-data.ts';
 
-test('contact form with valid data shows a thank you message', { tag: '@positive' }, async ({ page }) => {
+test('contact form with valid data shows a thank you message', { tag: '@positive' }, async ({ homePage }) => {
     const contactMessage = buildMessage();
 
-    await page.goto('/');
-    await page.getByLabel('Name').fill(contactMessage.name);
-    await page.getByLabel('Email').fill(contactMessage.email);
-    await page.getByLabel('Phone').fill(contactMessage.phone);
-    await page.getByLabel('Subject').fill(contactMessage.subject);
-    await page.getByTestId('ContactDescription').fill(contactMessage.description);
-    await page.getByRole('button', { name: 'Submit' }).click();
+    await homePage.goto();
+    await homePage.sendMessage(contactMessage);
 
-    const thanksTitleMessage = page.getByRole('heading', { name: `Thanks for getting in touch ${contactMessage.name}!` });
-    const thanksSubjectMessage = page.getByText(contactMessage.subject);
+    const thanksTitleMessage = homePage.thanksHeading(contactMessage.name);
+    const thanksSubjectMessage = homePage.sentSubject(contactMessage.subject);
 
     await expect(thanksTitleMessage).toBeVisible();
     await expect(thanksSubjectMessage).toBeVisible();
@@ -26,19 +21,14 @@ const contactMessageWithInvalidFormData = [
 ];
 
 for (const testCase of contactMessageWithInvalidFormData) {
-    test(`contact form with an invalid ${testCase.title} shows an error`, { tag: '@negative' }, async ({ page }) => {
+    test(`contact form with an invalid ${testCase.title} shows an error`, { tag: '@negative' }, async ({ homePage }) => {
         const contactMessage = buildMessage(testCase.overrides);
 
-        await page.goto('/');
-        await page.getByLabel('Name').fill(contactMessage.name);
-        await page.getByLabel('Email').fill(contactMessage.email);
-        await page.getByLabel('Phone').fill(contactMessage.phone);
-        await page.getByLabel('Subject').fill(contactMessage.subject);
-        await page.getByTestId('ContactDescription').fill(contactMessage.description);
-        await page.getByRole('button', { name: 'Submit' }).click();
+        await homePage.goto();
+        await homePage.sendMessage(contactMessage);
 
-        const errorMessage = page.getByText(testCase.error);
-        const thanksMessage = page.getByRole('heading', { name: `Thanks for getting in touch ${contactMessage.name}!` });
+        const errorMessage = homePage.errorMessage(testCase.error);
+        const thanksMessage = homePage.thanksHeading(contactMessage.name);
 
         await expect(errorMessage).toBeVisible();
         await expect(thanksMessage).toBeHidden();
