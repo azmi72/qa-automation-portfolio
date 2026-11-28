@@ -13,7 +13,12 @@ export default defineConfig({
         {
             name: 'ui',
             testDir: './tests/ui',
-            use: { ...devices['Desktop Chrome'], baseURL: UI_BASE_URL },
+            use: {
+                ...devices['Desktop Chrome'],
+                baseURL: UI_BASE_URL,
+                trace: 'on-first-retry',
+                screenshot: 'only-on-failure',
+            },
         },
     ],
     reporter: [['list'], ['html', { open: 'never' }]], // Shared (API + UI)
