@@ -8,3 +8,6 @@ export const UI_BASE_URL = process.env.UI_BASE_URL ?? 'https://automationintesti
 
 // API helper
 export const CREDENTIALS: Credentials = { username: 'admin', password: 'password123' };
+
+// UI helper
+export const PLATFORM_CREDENTIALS: Credentials = { username: 'admin', password: 'password' };

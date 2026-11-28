@@ -20,7 +20,7 @@ export type CreateBookingResponse = {
     booking: Booking;
 };
 
-// API helper
+// Shared (API + UI)
 export type Credentials = {
     username: string;
     password: string;
